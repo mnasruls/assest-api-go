@@ -2,6 +2,10 @@
 
 A RESTful API service for managing assets built with Go, Gin, and SQLite.
 
+## Documentation
+
+The API documentation is available at `URL_ADDRESS:YOUR_PORT/swagger/index.html`
+
 ## Features
 
 - CRUD operations for assets
