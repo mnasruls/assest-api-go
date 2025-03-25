@@ -16,7 +16,7 @@ import (
 
 func setupSQLite(dbConnection string) (*gorm.DB, error) {
 	if dbConnection == "" {
-		dbConnection = "/docker-compose/sqlite/sqlite/assets"
+		dbConnection = "./app/assets.db"
 	}
 
 	// Create the sqlite file if it's not available
