@@ -1,6 +1,7 @@
 package config
 
 import (
+	"assets-api-go/internal/models"
 	"database/sql"
 	"fmt"
 	"log"
@@ -75,4 +76,11 @@ func InitDb(env *EnviConfig) (*gorm.DB, error) {
 	log.Println("gorm connection is created")
 
 	return db, err
+}
+
+func AutoMigrate(db *gorm.DB) error {
+	if err := db.AutoMigrate(&models.Asset{}); err != nil {
+		return err
+	}
+	return nil
 }

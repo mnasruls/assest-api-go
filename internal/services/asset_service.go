@@ -40,10 +40,10 @@ func (s *assetService) CreateAsset(input *dto.AssetInputDto) (code int, response
 		}
 	}
 
-	if asset != nil {
-		return http.StatusBadRequest, &dto.BaseResponse{
-			Error:            common.BadRequest,
-			ErrorDescription: "Asset already exist",
+	if asset == nil {
+		return http.StatusNotFound, &dto.BaseResponse{
+			Error:            common.NotFound,
+			ErrorDescription: "Asset not found",
 		}
 	}
 
@@ -68,6 +68,15 @@ func (s *assetService) CreateAsset(input *dto.AssetInputDto) (code int, response
 		if err != nil {
 			log.Println("[assetService][CreateAsset] error rollback transaction :", err)
 		}
+		return http.StatusInternalServerError, &dto.BaseResponse{
+			Error:            common.InternalServerError,
+			ErrorDescription: "Something went wrong",
+		}
+	}
+
+	err = s.assetRepo.CommitTransaction(tx)
+	if err != nil {
+		log.Println("[assetService][CreateAsset] error commit transaction :", err)
 		return http.StatusInternalServerError, &dto.BaseResponse{
 			Error:            common.InternalServerError,
 			ErrorDescription: "Something went wrong",
@@ -207,6 +216,15 @@ func (s *assetService) UpdateAsset(id string, input *dto.AssetInputDto) (code in
 		}
 	}
 
+	err = s.assetRepo.CommitTransaction(tx)
+	if err != nil {
+		log.Println("[assetService][UpdateAsset] error commit transaction :", err)
+		return http.StatusInternalServerError, &dto.BaseResponse{
+			Error:            common.InternalServerError,
+			ErrorDescription: "Something went wrong",
+		}
+	}
+
 	resData := &dto.AssetOutputDto{
 		Id:              asset.Id,
 		Name:            asset.Name,
@@ -251,6 +269,14 @@ func (s *assetService) DeleteAsset(id string) (code int, response *dto.BaseRespo
 		if err != nil {
 			log.Println("[assetService][DeleteAsset] error rollback transaction :", err)
 		}
+		return http.StatusInternalServerError, &dto.BaseResponse{
+			Error:            common.InternalServerError,
+			ErrorDescription: "Something went wrong",
+		}
+	}
+	err = s.assetRepo.CommitTransaction(tx)
+	if err != nil {
+		log.Println("[assetService][DeleteAsset] error commit transaction :", err)
 		return http.StatusInternalServerError, &dto.BaseResponse{
 			Error:            common.InternalServerError,
 			ErrorDescription: "Something went wrong",

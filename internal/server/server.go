@@ -37,7 +37,7 @@ func NewRestApi(db *gorm.DB) *RestApi {
 
 func HealthCheck(c *gin.Context) {
 	res := map[string]interface{}{
-		"data": "Server is up and running",
+		"message": "Server is up and running",
 	}
 
 	c.JSON(http.StatusOK, res)

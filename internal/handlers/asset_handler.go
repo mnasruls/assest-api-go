@@ -6,6 +6,7 @@ import (
 	"assets-api-go/internal/services"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -74,14 +75,27 @@ func (h *assetHandler) GetAssetById(c *gin.Context) {
 }
 
 func (h *assetHandler) GetAssets(c *gin.Context) {
-	pagination := new(dto.MetaPagination)
-	err := c.BindQuery(&pagination)
+	page, err := strconv.Atoi(c.DefaultQuery("page", "1"))
 	if err != nil {
-		log.Println("[assetHandler][GetAssets] error binding query param :", err)
+		log.Println("[assetHandler][GetAssets] error binding request :", err)
 		c.JSON(http.StatusBadRequest, dto.BaseResponse{
 			Error:            common.BadRequest,
 			ErrorDescription: "invalid request",
 		})
+	}
+	limit, err := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	if err != nil {
+		log.Println("[assetHandler][GetAssets] error binding request :", err)
+		c.JSON(http.StatusBadRequest, dto.BaseResponse{
+			Error:            common.BadRequest,
+			ErrorDescription: "invalid request",
+		})
+	}
+	pagination := &dto.MetaPagination{
+		Page:   page,
+		Limit:  limit,
+		Order:  c.Query("order"),
+		SortBy: c.Query("sort_by"),
 	}
 
 	pagination = pagination.ParsePagination()

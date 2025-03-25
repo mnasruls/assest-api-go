@@ -18,6 +18,6 @@ func Build(route *gin.Engine, db *gorm.DB) {
 	route.POST(path+"/assets", assetHandler.CreateAsset)
 	route.GET(path+"/assets", assetHandler.GetAssets)
 	route.GET(path+"/assets/:id", assetHandler.GetAssetById)
-	route.PUT(path+"/assets/:id", assetHandler.CreateAsset)
+	route.PUT(path+"/assets/:id", assetHandler.UpdateAsset)
 	route.DELETE(path+"/assets/:id", assetHandler.DeleteAsset)
 }

@@ -28,6 +28,11 @@ func main() {
 	}
 
 	// run auto migrate
+	err = config.AutoMigrate(db)
+	if err != nil {
+		log.Fatal("Error migrate db :", err)
+		return
+	}
 
 	// serve API
 	api := server.NewRestApi(db)
