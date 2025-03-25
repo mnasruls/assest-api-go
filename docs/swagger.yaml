@@ -1,0 +1,345 @@
+definitions:
+  dto.AssetInputDto:
+    properties:
+      acquisition_date:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+      value:
+        type: number
+    required:
+    - acquisition_date
+    - name
+    - type
+    - value
+    type: object
+  dto.AssetOutputDto:
+    properties:
+      acquisition_date:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+      updated_at:
+        type: string
+      value:
+        type: number
+    type: object
+  dto.BaseResponse:
+    properties:
+      data: {}
+      error:
+        type: string
+      error_description:
+        type: string
+      message:
+        type: string
+    type: object
+  dto.MetaPagination:
+    properties:
+      data: {}
+      error:
+        type: string
+      error_description:
+        type: string
+      limit:
+        type: integer
+      message:
+        type: string
+      offset:
+        type: integer
+      order:
+        type: string
+      page:
+        type: integer
+      sort_by:
+        type: string
+      total:
+        type: integer
+      total_page:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /assets:
+    get:
+      consumes:
+      - application/json
+      description: Returns a list of assets JSON.
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Limit number
+        in: query
+        name: limit
+        type: integer
+      - description: Order
+        in: query
+        name: order
+        type: string
+      - description: Sort by
+        in: query
+        name: sort_by
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.MetaPagination'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.AssetOutputDto'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.MetaPagination'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.MetaPagination'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: List assets
+      tags:
+      - assets
+    post:
+      consumes:
+      - application/json
+      description: Takes an asset JSON and store in DB. Return saved JSON.
+      parameters:
+      - description: Asset JSON
+        in: body
+        name: asset
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AssetInputDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.AssetOutputDto'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Create a new asset
+      tags:
+      - assets
+  /assets/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an asset.
+      parameters:
+      - description: Asset ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Delete an asset
+      tags:
+      - assets
+    get:
+      consumes:
+      - application/json
+      description: Returns an asset JSON.
+      parameters:
+      - description: Asset ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.AssetOutputDto'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Get an asset
+      tags:
+      - assets
+    put:
+      consumes:
+      - application/json
+      description: Takes an asset JSON and update in DB. Return updated JSON.
+      parameters:
+      - description: Asset ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Asset JSON
+        in: body
+        name: asset
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AssetInputDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.AssetOutputDto'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Update an asset
+      tags:
+      - assets
+swagger: "2.0"
