@@ -40,10 +40,10 @@ func (s *assetService) CreateAsset(input *dto.AssetInputDto) (code int, response
 		}
 	}
 
-	if asset == nil {
-		return http.StatusNotFound, &dto.BaseResponse{
-			Error:            common.NotFound,
-			ErrorDescription: "Asset not found",
+	if asset != nil {
+		return http.StatusBadRequest, &dto.BaseResponse{
+			Error:            common.BadRequest,
+			ErrorDescription: "Asset already exist",
 		}
 	}
 
@@ -77,6 +77,10 @@ func (s *assetService) CreateAsset(input *dto.AssetInputDto) (code int, response
 	err = s.assetRepo.CommitTransaction(tx)
 	if err != nil {
 		log.Println("[assetService][CreateAsset] error commit transaction :", err)
+		err = s.assetRepo.RollbackTransaction(tx)
+		if err != nil {
+			log.Println("[assetService][CreateAsset] error rollback transaction :", err)
+		}
 		return http.StatusInternalServerError, &dto.BaseResponse{
 			Error:            common.InternalServerError,
 			ErrorDescription: "Something went wrong",
@@ -219,6 +223,10 @@ func (s *assetService) UpdateAsset(id string, input *dto.AssetInputDto) (code in
 	err = s.assetRepo.CommitTransaction(tx)
 	if err != nil {
 		log.Println("[assetService][UpdateAsset] error commit transaction :", err)
+		err = s.assetRepo.RollbackTransaction(tx)
+		if err != nil {
+			log.Println("[assetService][UpdateAsset] error rollback transaction :", err)
+		}
 		return http.StatusInternalServerError, &dto.BaseResponse{
 			Error:            common.InternalServerError,
 			ErrorDescription: "Something went wrong",
@@ -277,6 +285,10 @@ func (s *assetService) DeleteAsset(id string) (code int, response *dto.BaseRespo
 	err = s.assetRepo.CommitTransaction(tx)
 	if err != nil {
 		log.Println("[assetService][DeleteAsset] error commit transaction :", err)
+		err = s.assetRepo.RollbackTransaction(tx)
+		if err != nil {
+			log.Println("[assetService][DeleteAsset] error rollback transaction :", err)
+		}
 		return http.StatusInternalServerError, &dto.BaseResponse{
 			Error:            common.InternalServerError,
 			ErrorDescription: "Something went wrong",
